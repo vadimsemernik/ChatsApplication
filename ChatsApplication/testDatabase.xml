@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Root>
+	<Profiles>
+		<Profile>
+			<Name>Deadpool</Name>
+			<Password>12bullets</Password>
+			<ContactsCount>7</ContactsCount>
+			<Contacts>
+				<Contact><Number>1</Number><Name>Vanessa</Name></Contact>
+				<Contact><Number>2</Number><Name>Weasel</Name></Contact>
+				<Contact><Number>3</Number><Name>Cable</Name></Contact>
+				<Contact><Number>4</Number><Name>Rassel</Name></Contact>
+				<Contact><Number>5</Number><Name>Colossus</Name></Contact>
+				<Contact><Number>6</Number><Name>Warhead</Name></Contact>
+				<Contact><Number>7</Number><Name>Domino</Name></Contact>
+			</Contacts>
+			<TalksCount>3</TalksCount>
+			<TalksID>
+				<TalkID><Number>1</Number><ID>1</ID></TalkID>
+				<TalkID><Number>2</Number><ID>2</ID></TalkID>
+				<TalkID><Number>3</Number><ID>3</ID></TalkID>
+			</TalksID>
+		</Profile>
+		<Profile>
+			<Name>Vanessa</Name>
+			<Password>48minutes</Password>
+			<ContactsCount>3</ContactsCount>
+			<Contacts>
+				<Contact><Number>1</Number><Name>Deadpool</Name></Contact>
+				<Contact><Number>2</Number><Name>Weasel</Name></Contact>
+				<Contact><Number>3</Number><Name>Rassel</Name></Contact>
+			</Contacts>
+			<TalksCount>1</TalksCount>
+			<TalksID>
+				<TalkID><Number>1</Number><ID>1</ID></TalkID>
+			</TalksID>
+		</Profile>
+		<Profile>
+			<Name>Weasel</Name>
+			<Password>Wayward1</Password>
+			<ContactsCount>5</ContactsCount>
+			<Contacts>
+				<Contact><Number>1</Number><Name>Vanessa</Name></Contact>
+				<Contact><Number>2</Number><Name>Deadpool</Name></Contact>
+				<Contact><Number>3</Number><Name>Cable</Name></Contact>
+				<Contact><Number>4</Number><Name>Rassel</Name></Contact>
+				<Contact><Number>5</Number><Name>Domino</Name></Contact>
+			</Contacts>
+			<TalksCount>1</TalksCount>
+			<TalksID>
+				<TalkID><Number>1</Number><ID>3</ID></TalkID>
+			</TalksID>
+		</Profile>
+		<Profile>
+			<Name>Cable</Name>
+			<Password>2049year</Password>
+			<ContactsCount>5</ContactsCount>
+			<Contacts>
+				<Contact><Number>1</Number><Name>Deadpool</Name></Contact>
+				<Contact><Number>2</Number><Name>Weasel</Name></Contact>
+				<Contact><Number>3</Number><Name>Rassel</Name></Contact>
+				<Contact><Number>4</Number><Name>Colossus</Name></Contact>
+				<Contact><Number>5</Number><Name>Domino</Name></Contact>
+			</Contacts>
+			<TalksCount>2</TalksCount>
+			<TalksID>
+				<TalkID><Number>1</Number><ID>2</ID></TalkID>
+				<TalkID><Number>2</Number><ID>3</ID></TalkID>
+			</TalksID>
+		</Profile>
+	</Profiles>
+	<Talks>
+		<Talk>
+			<Title>WHAM! fans</Title>
+			<ID>1</ID>
+			<ParticipantsCount>2</ParticipantsCount>
+			<Participants>
+				<Participant><Number>1</Number><Name>Deadpool</Name></Participant>
+				<Participant><Number>2</Number><Name>Vanessa</Name></Participant>
+			</Participants>
+			<MessagesCount>3</MessagesCount>
+			<Messages>
+				<Message>
+					<Number>1</Number>
+					<Author>Deadpool</Author>
+					<Content>Would you like to take part in Deadpool 3?</Content>
+				</Message>
+				<Message>
+					<Number>2</Number>
+					<Author>Vanessa</Author>
+					<Content>On one condition: you will spend more screen time with me, than with Blind AL</Content>
+				</Message>
+				<Message>
+					<Number>3</Number>
+					<Author>Deadpool</Author>
+					<Content>It's pity, that you won't be with us in the next movie(((</Content>
+				</Message>
+			</Messages>
+		</Talk>
+		<Talk>
+			<Title>X-Force</Title>
+			<ID>2</ID>
+			<ParticipantsCount>3</ParticipantsCount>
+			<Participants>
+				<Participant><Number>1</Number><Name>Deadpool</Name></Participant>
+				<Participant><Number>2</Number><Name>Cable</Name></Participant>
+				<Participant><Number>3</Number><Name>Domino</Name></Participant>
+			</Participants>
+			<MessagesCount>7</MessagesCount>
+			<Messages>
+				<Message>
+					<Number>1</Number>
+					<Author>Deadpool</Author>
+					<Content>It's time to choose a leader to our team!</Content>
+				</Message>
+				<Message>
+					<Number>2</Number>
+					<Author>Cable</Author>
+					<Content>He is already chosen</Content>
+				</Message>
+				<Message>
+					<Number>3</Number>
+					<Author>Deadpool</Author>
+					<Content>I am very proud for your trust...</Content>
+				</Message>
+				<Message>
+					<Number>4</Number>
+					<Author>Domino</Author>
+					<Content>It's Wolverine. Relax, Pool.</Content>
+				</Message>
+				<Message>
+					<Number>5</Number>
+					<Author>Deadpool</Author>
+					<Content>Are you out of your f...ing mind? We don't even have Wolverine in our movies!</Content>
+				</Message>
+				<Message>
+					<Number>6</Number>
+					<Author>Cable</Author>
+					<Content>I think, Logan will appear in nearest films. In worse case, we can invite Colossus. Relax, Pool</Content>
+				</Message>
+				<Message>
+					<Number>7</Number>
+					<Author>Deadpool</Author>
+					<Content>.................(censored)</Content>
+				</Message>	
+			</Messages>
+		</Talk>
+		<Talk>
+			<Title>Wayward Boys</Title>
+			<ID>3</ID>
+			<ParticipantsCount>4</ParticipantsCount>
+			<Participants>
+				<Participant><Number>1</Number><Name>Deadpool</Name></Participant>
+				<Participant><Number>2</Number><Name>Weasel</Name></Participant>
+				<Participant><Number>3</Number><Name>Rassel</Name></Participant>
+				<Participant><Number>4</Number><Name>Cable</Name></Participant>
+			</Participants>
+			<MessagesCount>5</MessagesCount>
+			<Messages>
+				<Message>
+					<Number>1</Number>
+					<Author>Weasel</Author>
+					<Content>I think, Rassel should spend more time in school instead of my bar</Content>
+				</Message>
+				<Message>
+					<Number>2</Number>
+					<Author>Deadpool</Author>
+					<Content>Nonsense. In school we can't prepare properly for the annual dubstep tournament. Am I right, boy, what you say?</Content>
+				</Message>
+				<Message>
+					<Number>3</Number>
+					<Author>Rassel</Author>
+					<Content>I'm too drunk .....</Content>
+				</Message>
+				<Message>
+					<Number>4</Number>
+					<Author>Cable</Author>
+					<Content>I say: dubstep for pussies</Content>
+				</Message>
+				<Message>
+					<Number>5</Number>
+					<Author>Deadpool</Author>
+					<Content>And who invite that Mr. Smile in the chat?</Content>
+				</Message>
+			</Messages>
+		</Talk>
+	</Talks>
+</Root>
