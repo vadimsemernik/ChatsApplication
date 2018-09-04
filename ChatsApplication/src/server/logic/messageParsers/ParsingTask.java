@@ -50,7 +50,6 @@ public class ParsingTask implements Runnable{
 
 	private void parseLogicMessage(String[] messageParts) {
 		// extract logic header
-		System.out.println("ParsingTask : parseLogicMessage");
 		String header  = (messageParts[0].split(Protocol.Delimiter.Message.toString()))[1];
 		if (Protocol.LogicHeader.Contact.toString().equals(header)) {
 			addContactToProfile(messageParts[1],messageParts[2]);

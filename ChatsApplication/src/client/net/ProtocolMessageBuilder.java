@@ -140,12 +140,14 @@ public class ProtocolMessageBuilder {
 		builder.append(contactsCount);
 		builder.append(Protocol.Delimiter.Outer);
 		for (ClientTalk talk : talks){
+			builder.append(talk.getTitle());
+			builder.append(Protocol.Delimiter.Message);
 			builder.append(talk.getId());
-			builder.append(Protocol.Delimiter.Inner);
+			builder.append(Protocol.Delimiter.Message);
 			builder.append(talk.getParticipants().size());
-			builder.append(Protocol.Delimiter.Inner);
+			builder.append(Protocol.Delimiter.Message);
 			builder.append(talk.getMessagesCount());
-			builder.append(Protocol.Delimiter.Outer);
+			builder.append(Protocol.Delimiter.Inner);
 		}
 		builder.deleteCharAt(builder.length()-1);
 		return builder.toString();

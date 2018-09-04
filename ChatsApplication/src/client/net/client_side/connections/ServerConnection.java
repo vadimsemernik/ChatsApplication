@@ -38,7 +38,7 @@ public class ServerConnection implements Closeable{
 		messagesToSend = new SharedQueue <String>();
 		this.messagesToReceive = messagesToReceive;
 		//parser gets a queue of messages to parse
-		parser = new ServerMessagesParser(profile);
+		parser = new ServerMessagesParser(profile, this);
 		parser.bindMessagesQueue(messagesToReceive);
 		running = true;
 		try {
@@ -54,9 +54,7 @@ public class ServerConnection implements Closeable{
 			ClientLog.writeToLog("ServerConnection constructor initWriter IOException "+e.getMessage());
 			System.out.println(ErrorWarnings.WRITER_ERROR);
 			e.printStackTrace();
-		}
-		
-		
+		}	
 	}
 
 	private void initWriter(SharedQueue <String> messages) throws IOException {
@@ -71,6 +69,15 @@ public class ServerConnection implements Closeable{
 
 	public boolean sendMessage(String message) {
 		return messagesToSend.add(message);
+	}
+	
+	public void sendConfirmation() {
+		StringBuilder builder = new StringBuilder();
+		builder.append(Protocol.SERVICE_HEADER);
+		builder.append(Protocol.Delimiter.Message);
+		builder.append(Protocol.Message.OK);
+		sendMessage(builder.toString());
+		
 	}
 	
 	public boolean receiveMessage(String message){

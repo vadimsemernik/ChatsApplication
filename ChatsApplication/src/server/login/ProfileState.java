@@ -2,9 +2,7 @@ package server.login;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 
-import server.logic.entities.TalkID;
 import server.protocol.Protocol;
 
 public class ProfileState {
@@ -15,8 +13,8 @@ public class ProfileState {
 	private int talksCount;
 	
 	
-	public static ProfileState createInitialProfileState(String name, int contactsVersion, String talksDescription) {
-		ProfileState state = new ProfileState(name,contactsVersion,talksDescription);
+	public static ProfileState createInitialProfileState(String name, int contactsCount, String talksDescription) {
+		ProfileState state = new ProfileState(name,contactsCount,talksDescription);
 		return state;
 	}
 	
@@ -37,8 +35,8 @@ public class ProfileState {
 		this.talksCount=count;
 	}
 	
-	public void addTalkState(int talkID, int participantsCount, int messagesCount) {
-		TalkState state = new TalkState(talkID, participantsCount, messagesCount);
+	public void addTalkState(String title, int talkID, int participantsCount, int messagesCount) {
+		TalkState state = new TalkState(title, talkID, participantsCount, messagesCount);
 		talkStates.add(state);
 		
 	}
@@ -50,14 +48,14 @@ public class ProfileState {
 		String [] nodes = talksDescription.split(Protocol.Delimiter.Inner.toString());
 		for (String node : nodes){
 			String [] parts = node.split(Protocol.Delimiter.Message.toString(), count);
-			state = new TalkState(Integer.valueOf(parts[0]),Integer.valueOf(parts[1]),Integer.valueOf(parts[2]));
+			state = new TalkState(parts[0], Integer.valueOf(parts[1]),Integer.valueOf(parts[2]),Integer.valueOf(parts[3]));
 			talkStates.add(state);
 		}
 		
 	}
 	
-	public TalkState createTalkState(int id, int participantVersion, int messagesCount){
-		return new TalkState(id, participantVersion, messagesCount);
+	public TalkState createTalkState(String title, int id, int participantVersion, int messagesCount){
+		return new TalkState(title, id, participantVersion, messagesCount);
 	}
 
 	class TalkState {
@@ -65,13 +63,28 @@ public class ProfileState {
 		private int talkID;
 		private int participantsCount;
 		private int messagesCount;
+		private String title;
 		
 		
-		public TalkState(int id, int participantVersion, int messagesCount) {
+		public TalkState(String title, int id, int participantCount, int messagesCount) {
+			this.title=title;
 			this.talkID=id;
-			this.participantsCount = participantVersion;
+			this.participantsCount = participantCount;
 			this.messagesCount = messagesCount;
 		}
+
+		
+		
+		public String getTitle() {
+			return title;
+		}
+
+
+
+		public void setTitle(String title) {
+			this.title = title;
+		}
+
 
 
 		public int getId() {
@@ -87,6 +100,18 @@ public class ProfileState {
 		public int getMessagesCount() {
 			return messagesCount;
 		}
+
+
+		public void setParticipantsCount(int participantsCount) {
+			this.participantsCount = participantsCount;
+		}
+
+
+		public void setMessagesCount(int messagesCount) {
+			this.messagesCount = messagesCount;
+		}
+		
+		
 	}
 
 	public int getContactsCount() {

@@ -6,9 +6,9 @@ import java.util.Queue;
 import java.util.Set;
 
 import client.ClientProfile;
+import client.logic.entities.ClientTalk;
 import client.logic.entities.Contact;
 import client.logic.entities.Message;
-import client.logic.entities.ClientTalk;
 import client.net.client_side.messages_parsing_logic.ErrorWarnings;
 import client.net.client_side.net_protocol.Protocol;
 
@@ -28,17 +28,41 @@ public class ProfileUpdater {
 		// extract logic header
 		String [] messageParts = message.split(Protocol.Delimiter.Outer.toString());
 		String header  = (messageParts[0].split(Protocol.Delimiter.Message.toString()))[1];
+		int headerSize = Integer.valueOf(Protocol.Size.Header.toString());
 		if (Protocol.LogicHeader.Talk.toString().equals(header)) {
-			addTalk(messageParts, Integer.valueOf(Protocol.Size.Header.toString()));
+			addTalk(messageParts, headerSize);
 		} else if (Protocol.LogicHeader.Contact.toString().equals(header)) {
-			addContact(messageParts, Integer.valueOf(Protocol.Size.Header.toString()));
+			addContact(messageParts, headerSize);
 		} else if (Protocol.LogicHeader.Message.toString().equals(header)) {
-			addMessage(messageParts, Integer.valueOf(Protocol.Size.Header.toString()));
+			addMessage(messageParts, headerSize);
+		} else if (Protocol.LogicHeader.ContactsUpdate.toString().equals(header)) {
+			updateContacts(messageParts, headerSize);
+		} else if (Protocol.LogicHeader.TalkUpdate.toString().equals(header)) {
+			updateTalk(messageParts, headerSize);
 		} else {
 			throw new IllegalArgumentException(ErrorWarnings.INVALID_SERVER_MESSAGE);
 		}
 	}
 	
+	private void updateTalk(String[] messageParts, int index) {
+		String title = messageParts[index++];
+		int id = Integer.valueOf(messageParts[index++]);
+		Set <Contact> participants = getParticipants(messageParts[index++]);
+		Queue <Message> messages = getMessages(messageParts[index]);
+		profile.updateTalk(title, id, participants, messages);
+		
+	}
+
+	
+
+	private void updateContacts(String[] messageParts, Integer index) {
+		String contactsDescription = messageParts[index];
+		String [] contacts = contactsDescription.split(Protocol.Delimiter.Inner.toString());
+		for (String contact : contacts){
+			profile.addContact(new Contact(contact));
+		}
+	}
+
 	private void addMessage(String[] components, int index) {
 		if (components.length!=Integer.valueOf(Protocol.Size.Message.toString())){
 			throw new IllegalArgumentException(ErrorWarnings.INVALID_MESSAGE);
@@ -70,19 +94,27 @@ public class ProfileUpdater {
 
 
 	private Set<Contact> getParticipants(String message) {
-		String[] names = message.split(Protocol.Delimiter.Inner.toString());
+		String[] parts = message.split(Protocol.Delimiter.Inner.toString());
+		String header = parts[0];
+		int participantsCount = Integer.valueOf(header.split(Protocol.Delimiter.Message.toString())[1]);
 		Set <Contact> participants = new HashSet<Contact>();
-		for (String name : names){
-			participants.add(new Contact(name));
+		if (participantsCount>0){
+			for (int i = 1; i<=participantsCount;i++){
+				participants.add(new Contact(parts[i]));
+			}
 		}
 		return participants;
 	}
 	
 	private Queue<Message> getMessages(String message) {
-		String [] textMessages = message.split(Protocol.Delimiter.Inner.toString());
+		String [] parts = message.split(Protocol.Delimiter.Inner.toString());
+		String header = parts[0];
+		int messagesCount = Integer.valueOf(header.split(Protocol.Delimiter.Message.toString())[1]);
 		Queue <Message> messages = new LinkedList <Message>();
-		for (String text : textMessages){
-			messages.add(initMessage(text));
+		if (messagesCount>0){
+			for (int i=1; i<=messagesCount;i++){
+				messages.add(initMessage(parts[i]));
+			}
 		}
 		return messages;
 	}

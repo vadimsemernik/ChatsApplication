@@ -2,13 +2,13 @@ package client;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
+import java.util.Queue;
 import java.util.Set;
 
+import client.logic.entities.ClientTalk;
 import client.logic.entities.Contact;
 import client.logic.entities.Message;
-import client.logic.entities.ClientTalk;
 
 public class ClientProfile {
 	
@@ -80,6 +80,18 @@ public class ClientProfile {
 	@Override
 	public String toString(){
 		return name;
+		
+	}
+
+	public void updateTalk(String title, int talkID, Set<Contact> participants, Queue<Message> messages) {
+		ClientTalk target=null;
+		for (ClientTalk talk : talks){
+			if (talk.getId()==talkID){
+				target=talk;
+				break;
+			}
+		}
+		target.update(title, participants, messages);
 		
 	}
 

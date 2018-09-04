@@ -34,7 +34,7 @@ public class Protocol {
 		Talk("5"),
 		Contact("2"),
 		Message("4"),
-		TalkDescription("3");
+		TalkDescription("4");
 		;
 		
 		private String content;
@@ -61,7 +61,9 @@ public class Protocol {
 		Participant("Participant"),
 		Contact("Contact"),
 		ContactsUpdate("Contacts update"),
-		TalkUpdate("Talk update")
+		TalkUpdate("Talk update"),
+		ParticipantsCount("Participants count"),
+		MessagesCount("Messages Count")
 		;
 		
 		private String content;

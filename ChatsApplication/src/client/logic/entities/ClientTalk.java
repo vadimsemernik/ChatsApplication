@@ -1,6 +1,5 @@
 package client.logic.entities;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -95,6 +94,16 @@ public class ClientTalk {
 	
 	public int getMessagesCount() {
 		return messagesCount;
+	}
+
+	public void update(String title, Set<Contact> participants, Queue<Message> messages) {
+		this.title=title;
+		for (Contact participant: participants){
+			addParticipant(participant);
+		}
+		for (Message message : messages){
+			addMessage(message);
+		}
 	}
 
 	

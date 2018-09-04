@@ -3,15 +3,11 @@
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import server.clients.ClientsManager;
 import server.data.ApplicationDatabase;
 import server.logic.entities.ServerMessage;
-import server.logic.entities.ServerProfile;
-import server.logic.entities.ServerTalk;
 import server.logic.entities.TalkParticipant;
 import server.logic.entities.cache_entities.CacheProfile;
 import server.logic.entities.cache_entities.CacheTalk;
@@ -53,7 +49,6 @@ public class ServerState {
 		for (CacheTalk talk : cacheTalks){
 			talks.put(talk.getId(), talk);
 		}
-		
 	}
 
 

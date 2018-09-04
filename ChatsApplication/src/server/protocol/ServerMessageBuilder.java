@@ -1,18 +1,11 @@
 package server.protocol;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
 
 import server.logic.entities.ServerMessage;
 import server.logic.entities.ServerProfile;
 import server.logic.entities.ServerTalk;
-import server.logic.entities.TalkID;
 import server.logic.entities.TalkParticipant;
-import server.server_state.ServerState;
 
 
 public class ServerMessageBuilder {
@@ -71,6 +64,10 @@ public class ServerMessageBuilder {
 
 	private String getParticipantsMessage(Collection<TalkParticipant> participants) {
 		StringBuilder builder = new StringBuilder();
+		builder.append(Protocol.LogicHeader.ParticipantsCount);
+		builder.append(Protocol.Delimiter.Message);
+		builder.append(participants.size());
+		builder.append(Protocol.Delimiter.Inner);
 		for (TalkParticipant participant : participants){
 			builder.append(participant.getName());
 			builder.append(Protocol.Delimiter.Inner);
@@ -83,6 +80,10 @@ public class ServerMessageBuilder {
 
 	private String getMessagesMessage(Collection<ServerMessage> messages) {
 		StringBuilder builder = new StringBuilder();
+		builder.append(Protocol.LogicHeader.MessagesCount);
+		builder.append(Protocol.Delimiter.Message);
+		builder.append(messages.size());
+		builder.append(Protocol.Delimiter.Inner);
 		for (ServerMessage message : messages){
 			builder.append(getMessage(message));
 			builder.append(Protocol.Delimiter.Inner);

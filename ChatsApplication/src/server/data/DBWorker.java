@@ -363,11 +363,19 @@ public class DBWorker implements ApplicationDatabase{
 	public Collection<CacheProfile> getCacheProfiles() throws SQLException {
 		ResultSet set = selectColumnsFromTable(QueryLibrary.Profiles.Table.toString(), 
 				QueryLibrary.Profiles.ClientName.toString(), QueryLibrary.Profiles.Password.toString(),
-				QueryLibrary.Profiles.ContactsCount.toString(), QueryLibrary.Profiles.TalksIDCount.toString());
+				QueryLibrary.Profiles.ContactsTable.toString(), QueryLibrary.Profiles.TalksIDTable.toString());
 		List <CacheProfile> profiles = new LinkedList<CacheProfile>();
 		CacheProfile profile;
+		String clientName;
+		String password;
+		int contactsCount;
+		int talksCount;
 		while(set.next()){
-			profile = new CacheProfile(set.getString(1), set.getString(2), set.getInt(3), set.getInt(4));
+			clientName = set.getString(1);
+			password = set.getString(2);
+			contactsCount = selectRowsCountFromTable(set.getString(3));
+			talksCount = selectRowsCountFromTable(set.getString(4));
+			profile = new CacheProfile(clientName, password, contactsCount, talksCount);
 			profiles.add(profile);
 		}
 		return profiles;
@@ -377,16 +385,26 @@ public class DBWorker implements ApplicationDatabase{
 	public Collection<CacheTalk> getCacheTalks() throws SQLException {
 		ResultSet set = selectColumnsFromTable(QueryLibrary.Talks.Table.toString(), 
 				QueryLibrary.Talks.TalkID.toString(), QueryLibrary.Talks.TalkTitle.toString(),
-				QueryLibrary.Talks.ParticipantsCount.toString(), QueryLibrary.Talks.MessagesCount.toString());
+				QueryLibrary.Talks.ParticipantsTable.toString(), QueryLibrary.Talks.MessagesTable.toString());
 		List <CacheTalk> talks = new LinkedList<CacheTalk>();
 		CacheTalk talk;
+		int id;
+		String title;
+		int participantsCount;
+		int messagesCount;
 		while(set.next()){
-			talk = new CacheTalk(set.getInt(1), set.getString(2), set.getInt(3), set.getInt(4));
+			id = set.getInt(1);
+			title=set.getString(2);
+			participantsCount = selectRowsCountFromTable(set.getString(3));
+			messagesCount = selectRowsCountFromTable(set.getString(4));
+			talk = new CacheTalk(id, title, participantsCount, messagesCount);
 			talks.add(talk);
 		}
 		return talks;
 	}
 	
+	
+
 	@Override
 	public Collection<ServerMessage> getTalkMessagesInBounds(int talkID, int floor, int ceiling) throws SQLException {
 		String tableName = String.valueOf(talkID)+QueryLibrary.Talks.MessagesTable;
@@ -400,6 +418,20 @@ public class DBWorker implements ApplicationDatabase{
 		return messages;
 	}
 	
+	private int selectRowsCountFromTable(String tableName) {
+		StringBuilder query = new StringBuilder();
+		query.append("Select count(*) from ");
+		query.append(tableName);
+		query.append(";");
+		ResultSet result = connection.getDBData(query.toString());
+		try {
+			result.next();
+			return result.getInt(1);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
 	
 	private ResultSet selectData(String tableName) {
 		StringBuilder query = new StringBuilder();

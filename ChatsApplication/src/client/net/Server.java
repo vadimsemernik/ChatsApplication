@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 
 import client.ClientProfile;
 import client.logic.entities.Message;
+import client.logic.utils.SharedQueue;
 import client.net.client_side.connections.InitialServerConnection;
 import client.net.client_side.connections.ServerConnection;
 import test.logging.ClientLog;
@@ -111,10 +112,39 @@ public class Server implements Closeable{
 	}
 
 	public ClientProfile updateProfile(ClientProfile profile) {
-		connect();
-		builder.getUpdateMessage(profile);
+		connect(profile);
+		String message = builder.getUpdateMessage(profile);
+		System.out.println(message);
+		connection.sendMessage(message);
 		return profile;
 	}
+
+	private void connect(ClientProfile profile) {
+		if (!alreadyConnectedToServer){
+			initConnection(profile);
+		}
+		
+	}
+
+
+
+	private void initConnection(ClientProfile profile) {
+		try {
+			serverIP = InetAddress.getLocalHost();
+			Socket socket = new Socket(serverIP, port);
+			connection = new ServerConnection(socket, profile, new SharedQueue<String> ());
+			alreadyConnectedToServer = true;
+		} catch (UnknownHostException e) {
+			ClientLog.writeToLog("Server initConnection UnknownHostException "+e.getMessage());
+			e.printStackTrace();
+		} catch (IOException e){
+			ClientLog.writeToLog("Server initConnection IOException "+e.getMessage());
+			e.printStackTrace();
+		}
+		
+	}
+
+
 
 	private void connect() {
 		if (!alreadyConnectedToServer){

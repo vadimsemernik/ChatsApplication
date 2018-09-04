@@ -27,10 +27,8 @@ public class NewConnection {
 		writer = new ProtocolWriter(socket.getOutputStream());
 		try{
 			loginMessage = reader.readMessage();
-			System.out.println("NewConnection: reader.readMessage");
 			String serverAnswer = check(loginMessage);	
 			handleServerAnswer(serverAnswer);	
-			System.out.println("NewConnection: handleServerAnswer");
 		} catch (IOException e){
 			e.printStackTrace();
 		}	
@@ -47,7 +45,6 @@ public class NewConnection {
 
 
 	private void processServerAnswer(String answer) throws IOException {
-		System.out.println("NewConnection :processServerAnswer ");
 		if (answer.startsWith(Protocol.Login.Found.toString())){					
 			String [] parts = answer.split(Protocol.Delimiter.Message.toString());
 			String client = parts[1];
@@ -75,7 +72,6 @@ public class NewConnection {
 
 
 	private boolean sendClientProfile(String client) {
-		System.out.println("NewConnection: sendClientProfile");
 		ProfileSender sender = new ProfileSender(profileState, socket, writer, reader);
 		return sender.sendProfile (client);
 	

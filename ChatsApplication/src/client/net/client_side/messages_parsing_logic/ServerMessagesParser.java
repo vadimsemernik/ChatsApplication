@@ -2,6 +2,7 @@ package client.net.client_side.messages_parsing_logic;
 
 import client.ClientProfile;
 import client.logic.utils.SharedQueue;
+import client.net.client_side.connections.ServerConnection;
 import client.net.client_side.net_protocol.Protocol;
 import client.net.client_side.profile_updating.ProfileUpdater;
 
@@ -16,15 +17,19 @@ public class ServerMessagesParser {
 	private boolean running;
 	private Thread worker;
 	
+	private ServerConnection serverConnection;
 
-	public ServerMessagesParser(ClientProfile profile) {
+
+	
+	public ServerMessagesParser(ClientProfile profile, ServerConnection serverConnection) {
 		updater = new ProfileUpdater(profile);
 		newMessages = new SharedQueue<String>();
+		this.serverConnection=serverConnection;
 		running = true;
 		worker = new Worker ();
 		worker.start();
 	}
-	
+
 	private void newMessage(String message){
 		if (message.equals("")){
 			System.out.println("Empty message");
@@ -34,6 +39,8 @@ public class ServerMessagesParser {
 			parseServiceMessage(message);
 		} else if (message.startsWith(Protocol.INFO_HEADER)){
 			updater.parseMessage(message);
+		} else if (message.startsWith(Protocol.Login.Found.toString())){
+			System.out.println(message);
 		} else {
 			try {
 				throw new UnknownMessageException(message);
@@ -44,7 +51,9 @@ public class ServerMessagesParser {
 	}
 
 	private void parseServiceMessage(String message) {
-		// TODO Auto-generated method stub
+		if (message.endsWith(Protocol.Message.End.toString())){
+			serverConnection.sendConfirmation();
+		}
 		
 	}
 

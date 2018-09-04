@@ -4,6 +4,7 @@ package server.login;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import server.clients.ClientsManager;
@@ -95,31 +96,71 @@ public class ProfileSender {
 
 	private boolean loadProfileUpdates(ProfileState state) {
 		CacheProfile profile = server.getProfiles().get(state.getName());
-		updateContacts(state.getContactsCount(), profile);
-		updateTalks(state.getTalkStates(), profile);
+		profile.lock();
+		try {
+			updateContacts(state.getContactsCount(), profile);
+			state.setTalksCount(profile.getContactsCount());
+			try {
+				sendFinishMessage();
+				getClientConfirmation();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			updateTalks(state.getTalkStates(), profile);
+		} finally {
+			profile.unlock();
+		}
 		return true;
+	}
+
+
+	private void sendFinishMessage() throws IOException {
+		StringBuilder builder = new StringBuilder();
+		builder.append(Protocol.SERVICE_HEADER);
+		builder.append(Protocol.Delimiter.Message);
+		builder.append(Protocol.Message.End);
+		writer.writeMessage(builder.toString());
+		
+		
 	}
 
 
 	private void updateTalks(Collection<TalkState> talkStates, CacheProfile profile) {
 		for (TalkState state : talkStates){
-			CacheTalk talk = server.getTalks().get(state.getId());
-			Collection <ServerMessage> messages=null;
-			Collection <TalkParticipant> participants=null;
-			if (talk.getMessagesCount()>state.getMessagesCount()){
-				messages = talk.getMessages(state.getMessagesCount()+1);
-			}
-			if (talk.getParticipantsCount()> state.getParticipantsCount()){
-				participants = talk.getParticipants(state.getParticipantsCount()+1);
-			}
-			String message = messageBuilder.getTalkUpdateMessage(talk.getId(), talk.getTitle(), participants, messages);
+			updateTalk(state);
+		}
+	}
+
+
+	private void updateTalk(TalkState state) {
+		boolean staleMessages=false, staleParticipants=false, staleTitle=false;
+		CacheTalk talk = server.getTalks().get(state.getId());
+		Collection <ServerMessage> messages=Collections.emptyList();
+		Collection <TalkParticipant> participants=Collections.emptyList();
+		String title = talk.getTitle();
+		if ( ! (title.equals(state.getTitle())) ){
+			staleTitle=true;
+			state.setTitle(title);
+		}
+		if (talk.getMessagesCount()>state.getMessagesCount()){
+			staleMessages=true;
+			messages = talk.getMessages(state.getMessagesCount()+1);
+			state.setMessagesCount(state.getMessagesCount()+messages.size());
+		}
+		if (talk.getParticipantsCount()> state.getParticipantsCount()){
+			System.out.println("talk.getParticipantsCount()> state.getParticipantsCount()");
+			staleParticipants=true;
+			participants = talk.getParticipants(state.getParticipantsCount()+1);
+			state.setParticipantsCount(state.getParticipantsCount()+participants.size());
+		}
+		if (staleMessages || staleParticipants || staleTitle){
+			String message = messageBuilder.getTalkUpdateMessage(talk.getId(), title, participants, messages);
 			try {
 				writer.writeMessage(message);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		
 	}
 
 
@@ -140,24 +181,25 @@ public class ProfileSender {
 	private boolean loadProfile(String clientProfile) {
 		try {
 			CacheProfile cacheProfile = server.getProfiles().get(clientProfile);
-			previousState = new ProfileState(clientProfile, cacheProfile.getContactsCount());
-			ServerProfile profile = cacheProfile.loadFullProfile();
-			String message = messageBuilder.getProfileMessage(profile);
-			writer.writeMessage(message);
-			Collection<TalkID> talkIDs = profile.getTalksID();
-			previousState.setTalksCount(talkIDs.size());
-			Collection <ServerTalk> talks = ServerManager.getTalks(talkIDs);
-			for (ServerTalk talk : talks){
-				previousState.addTalkState(talk.getId(), talk.getParticipantsCount(), talk.getMessagesCount());
-				message = messageBuilder.getTalkMessage(talk);
-				writer.writeMessage(message);
-			}
+			cacheProfile.lock();
 			try {
-				writer.writeMessage(Protocol.SERVICE_HEADER+Protocol.Delimiter.Message+Protocol.Message.End);
-				getClientConfirmation();
-			} catch (IOException e) {
-				e.printStackTrace();
+				previousState = new ProfileState(clientProfile, cacheProfile.getContactsCount());
+				ServerProfile profile = cacheProfile.loadFullProfile();
+				String message = messageBuilder.getProfileMessage(profile);
+				writer.writeMessage(message);
+				Collection<TalkID> talkIDs = profile.getTalksID();
+				previousState.setTalksCount(talkIDs.size());
+				Collection <ServerTalk> talks = ServerManager.getTalks(talkIDs);
+				for (ServerTalk talk : talks){
+					previousState.addTalkState(talk.getTitle(),talk.getId(), talk.getParticipantsCount(), talk.getMessagesCount());
+					message = messageBuilder.getTalkMessage(talk);
+					writer.writeMessage(message);
+				}
+			} finally{
+				cacheProfile.unlock();
 			}
+			sendFinishMessage();
+			getClientConfirmation();
 			addConnectionAndUpdate(previousState);
 			return true;
 		} catch (IOException e) {
@@ -171,14 +213,14 @@ public class ProfileSender {
 	private void addConnectionAndUpdate(ProfileState state) {
 		ProfileLoadConnection connection = new ProfileLoadConnection(state.getName(), socket);
 		ClientsManager.addConnetion(connection);
-		updateProfileWithLocks(state, connection);
+		updateProfileWithTalkLocks(state, connection);
 		CleanConnection clean = new CleanConnection(connection);
 		ClientsManager.changeConnection(connection, clean);
 		
 	}
 
 
-	private void updateProfileWithLocks(ProfileState state, ProfileLoadConnection connection) {
+	private void updateProfileWithTalkLocks(ProfileState state, ProfileLoadConnection connection) {
 		Collection <TalkState> talkStates = state.getTalkStates();
 		updateTalks(talkStates, connection);
 		CacheProfile profile = server.getProfiles().get(state.getName());
@@ -213,7 +255,8 @@ public class ProfileSender {
 			Collection <ServerTalk> talks = ServerManager.getTalks(talkIDs);
 			Collection <TalkState> talkStates = new LinkedList<ProfileState.TalkState>();
 			for (ServerTalk talk : talks){
-				talkStates.add(state.createTalkState(talk.getId(), talk.getParticipantsCount(), talk.getMessagesCount()));
+				talkStates.add(state.createTalkState(talk.getTitle(),talk.getId(),
+						talk.getParticipantsCount(), talk.getMessagesCount()));
 				String string = messageBuilder.getTalkMessage(talk);
 				try {
 					writer.writeMessage(string);

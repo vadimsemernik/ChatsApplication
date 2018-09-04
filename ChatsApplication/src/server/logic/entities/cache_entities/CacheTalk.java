@@ -1,14 +1,11 @@
 package server.logic.entities.cache_entities;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import server.logic.entities.ServerMessage;
-import server.logic.entities.ServerTalk;
 import server.logic.entities.TalkParticipant;
 import server.server_state.ServerManager;
 
@@ -118,14 +115,14 @@ public class CacheTalk {
 
 	public Collection<ServerMessage> getMessages(int from) {
 		if (from>messagesCount){
-			return null;
+			return Collections.emptyList();
 		}
 		return ServerManager.getMessages(talkID, from);
 	}
 
 	public Collection<TalkParticipant> getParticipants(int from) {
 		if (from>participantsCount){
-			return null;
+			return Collections.emptyList();
 		}
 		return ServerManager.getParticipants(talkID, from);
 	}

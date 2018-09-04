@@ -28,7 +28,7 @@ public class LoginHandler {
 	public void handle(String login, String password) {
 		String result;
 		ClientProfile profile = null;
-		//profile = getFromDatabase(login, password);
+		profile = getFromDatabase(login, password);
 		if (profile == null){
 			result = server.search(login, password);
 		} else {
